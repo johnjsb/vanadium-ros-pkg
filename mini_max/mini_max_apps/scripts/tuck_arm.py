@@ -44,7 +44,7 @@ if __name__ == '__main__':
     rospy.init_node('tuck_arm')
 
     # a publisher for arm movement
-    client = actionlib.SimpleActionClient('follow_joint_trajectory', FollowJointTrajectoryAction)
+    client = actionlib.SimpleActionClient('/arm_controller/follow_joint_trajectory', FollowJointTrajectoryAction)
     client.wait_for_server()
 
     # prepare a joint trajectory
@@ -68,10 +68,11 @@ if __name__ == '__main__':
         point = JointTrajectoryPoint()
         point.positions = tucked
         point.velocities = [ 0.0 for servo in msg.joint_names ]
-        point.time_from_start = rospy.Duration(3.0)
+        point.time_from_start = rospy.Duration(8.0)
         msg.points.append(point)
     
     # execute
+    msg.header.stamp = rospy.Time.now()
     goal = FollowJointTrajectoryGoal()
     goal.trajectory = msg
     client.send_goal(goal)
